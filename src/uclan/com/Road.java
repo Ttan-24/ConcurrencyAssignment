@@ -5,6 +5,47 @@ import java.util.ArrayList;
 // road sections acts as a passive buffer
 // acts as queue data structure
 public class Road {
+
+	// array first on first out
+	private static int[] roadArray;
+	private final int front;
+	private static int back;
+	private final int maxSize;
+
+	Road(int _maxSize) {
+		front = 0;
+		back = 0;
+		maxSize = _maxSize;
+		roadArray = new int[maxSize]; // making a new array to specify the maxSize
+	}
+	// add
+
+	public void add(int car) {
+		// check if the array is full
+		if (back == maxSize) {
+			System.out.print("Array is full");
+		} else {
+			// Push
+			roadArray[back + 1] = car;
+			back++;
+		}
+	}
+
+	public void remove() {
+		for (int i = 0; i < back - 1; i++) {
+			roadArray[i] = roadArray[i + 1];
+		}
+		back--;
+	}
+
+	public void display() {
+		for (int i = 0; i < back; i++) {
+			System.out.print(roadArray[i]);
+		}
+	}
+
+	// remove
+
 	// create an array
 	// store the car objects in the array as they pass in and out (capacity
 	// according

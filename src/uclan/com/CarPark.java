@@ -2,7 +2,10 @@ package uclan.com;
 
 import java.util.ArrayList;
 
-public class CarPark extends Thread {
+public class CarPark extends Thread { // aka consumer
+
+	Road road;
+
 	int timestamp;
 	ArrayList<Vehicle> Cars = new ArrayList<Vehicle>();
 

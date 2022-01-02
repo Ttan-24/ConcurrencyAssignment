@@ -1,10 +1,13 @@
 package uclan.com;
 
-public class Vehicle {
+public class Vehicle { // creating the cars in the entrypoint
 
 	private CarPark destination;
 	private int mGridlockTime;
 	private int parkedTime;
+
+	public Vehicle() {
+	}
 
 	public Vehicle(int gridlockTime) {
 		mGridlockTime = gridlockTime;

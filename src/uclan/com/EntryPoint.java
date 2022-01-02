@@ -2,10 +2,18 @@ package uclan.com;
 
 import java.util.ArrayList;
 
-public class EntryPoint extends Thread {
+public class EntryPoint extends Thread { // aka producer
+
+	Road road;
+
+	void Produce() {
+		Vehicle car = new Vehicle();
+
+	}
 
 	ArrayList<CarPark> destinationList = new ArrayList<CarPark>(); //////// dont use arraylist or any java collection
 																	//////// library
+
 	int preDeterminedRate;
 	// array of vehicles generated
 

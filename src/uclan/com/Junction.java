@@ -1,6 +1,11 @@
 package uclan.com;
 
-public class Junction {
+import java.util.ArrayList;
+
+public class Junction { // aka producer and consumer. takes in consumer and than sends out as a producer
+
+	ArrayList<Road> roadList = new ArrayList<Road>();
+
 	Boolean Route;
 	// array of route
 	// array of 4 entrances

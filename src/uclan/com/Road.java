@@ -7,40 +7,62 @@ import java.util.ArrayList;
 public class Road {
 
 	// array first on first out
-	private static int[] roadArray;
+	private Vehicle[] roadArray;
 	private final int front;
 	private static int back;
 	private final int maxSize;
 
 	Road(int _maxSize) {
 		front = 0;
-		back = 0;
+		back = -1;
 		maxSize = _maxSize;
-		roadArray = new int[maxSize]; // making a new array to specify the maxSize
+		roadArray = new Vehicle[maxSize]; // making a new array to specify the maxSize
 	}
 	// add
 
-	public void add(int car) {
+	public synchronized void add(Vehicle car) throws InterruptedException {
 		// check if the array is full
 		if (back == maxSize) {
-			System.out.print("Array is full");
+			System.out.println("Road: Array is full");
+			wait();
+			notifyAll();
 		} else {
 			// Push
 			roadArray[back + 1] = car;
 			back++;
+			System.out.println("Road: Added Car");
+			Thread.sleep(500);
 		}
 	}
 
-	public void remove() {
-		for (int i = 0; i < back - 1; i++) {
-			roadArray[i] = roadArray[i + 1];
+	public synchronized Vehicle remove() throws InterruptedException {
+
+		if (IsEmpty()) {
+			// do not remove if there is nothing there to remove
+			// wait();
+			return null;
+		} else {
+			Vehicle car = roadArray[front];
+			for (int i = 0; i < back; i++) {
+				roadArray[i] = roadArray[i + 1];
+				System.out.println("Road: Removed Car");
+				Thread.sleep(500);
+			}
+			back--;
+			return car;
 		}
-		back--;
+
+		// buffer is not full, notify all threads that the buffer is empty
+
 	}
 
-	public void display() {
-		for (int i = 0; i < back; i++) {
-			System.out.print(roadArray[i]);
+	public synchronized boolean IsEmpty() {
+		return back == -1; // the back has come all over to the front
+	}
+
+	public synchronized void display() {
+		for (int i = 0; i <= back; i++) {
+			System.out.println(roadArray[i]);
 		}
 	}
 

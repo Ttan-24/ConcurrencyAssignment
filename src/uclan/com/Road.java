@@ -6,6 +6,7 @@ import java.util.ArrayList;
 // acts as queue data structure
 public class Road {
 
+	public Clock roadClock;
 	// array first on first out
 	private Vehicle[] roadArray;
 	private final int front;
@@ -31,7 +32,7 @@ public class Road {
 		// Push
 		roadArray[back + 1] = car;
 		back++;
-		System.out.println("Road: Added Car " + car.id);
+		System.out.println("Time: " + roadClock.time() + " - Road: Added Car " + car.id);
 		// Thread.sleep(500);
 		// }
 	}
@@ -49,7 +50,7 @@ public class Road {
 
 			// Thread.sleep(500);
 		}
-		System.out.println("Road: Removed Car " + car.id);
+		System.out.println("Time: " + roadClock.time() + " - Road: Removed Car " + car.id);
 		back--;
 		return car;
 		// }

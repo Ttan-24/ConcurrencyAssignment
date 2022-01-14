@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class CarPark extends Thread { // aka consumer
 
+	public Clock carParkClock;
 	Road road;
 	// private final int maxSize;
 	private Vehicle[] carParkArray;
@@ -59,7 +60,8 @@ public class CarPark extends Thread { // aka consumer
 		// remove
 
 		Vehicle car = road.remove();
-		System.out.println("CarPark: Car " + car.id + " removed from the entry road");
+		System.out
+				.println("Time: " + carParkClock.time() + " - CarPark: Car " + car.id + " removed from the entry road");
 		// if (car == null) {
 		// System.out.println("CarPark cannot find car...");
 		// Thread.sleep(500);
@@ -67,13 +69,14 @@ public class CarPark extends Thread { // aka consumer
 
 		// check if the array is full
 		if (back == maxSize - 1) {
-			System.out.print("CarPark: Array is full");
+			System.out.print("Time: " + carParkClock.time() + " - CarPark: Array is full");
 			isFullCarPark = true;
 		} else {
 			// Push
 			carParkArray[back + 1] = car;
 			back++;
-			System.out.println("CarPark: Car " + car.id + " added to the CarPark Industrial Space");
+			System.out.println("Time: " + carParkClock.time() + " - CarPark: Car " + car.id
+					+ " added to the CarPark Industrial Space");
 		}
 		// }
 

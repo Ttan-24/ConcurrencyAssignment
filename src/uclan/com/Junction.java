@@ -2,6 +2,7 @@ package uclan.com;
 
 public class Junction extends Thread { // aka producer and consumer. takes in consumer and than sends out as a producer
 
+	public Clock junctionClock;
 	Road entryRoad; // consumer
 	Road exitRoad; // producer
 	int carHold = 0;
@@ -12,13 +13,13 @@ public class Junction extends Thread { // aka producer and consumer. takes in co
 		// carHold = car.id;
 
 		Vehicle car = entryRoad.remove();
-		System.out.println("Junction: Car " + car.id + " consumed from the entryRoad");
+		System.out.println("Time: " + junctionClock.time() + " - Junction: Car " + car.id + " consumed from the entryRoad");
 		if (car == null) {
 			System.out.println("Junction cannot find car...");
 		} else {
 			exitRoad.add(car);
 			System.out
-					.println("Junction: Car " + car.id + " taken from the entry road and sending it to the exit road");
+					.println("Time: " + junctionClock.time() + " - Junction: Car " + car.id + " taken from the entry road and sending it to the exit road");
 		}
 	}
 

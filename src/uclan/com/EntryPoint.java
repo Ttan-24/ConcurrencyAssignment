@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class EntryPoint extends Thread { // aka producer
 
+	public Clock entryPointClock;
 	Road road;
 	public int idCount = 1;
 	public String name;
@@ -25,6 +26,7 @@ public class EntryPoint extends Thread { // aka producer
 					}
 				}
 				try {
+					// System.out.println("Produced at: " + entryPointClock.time());
 					produce();
 					road.notify();
 					Thread.sleep(1000);
@@ -52,7 +54,8 @@ public class EntryPoint extends Thread { // aka producer
 
 	public void produce() throws InterruptedException {
 		Vehicle car = new Vehicle(idCount++);
-		System.out.println("EntryPoint: Car " + car.id + " produced by EntryPoint " + name);
+		System.out.println(
+				"Time: " + entryPointClock.time() + " - EntryPoint: Car " + car.id + " produced by EntryPoint " + name);
 		road.add(car);
 	}
 

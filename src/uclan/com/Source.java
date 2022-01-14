@@ -11,6 +11,13 @@ public class Source {
 		Junction A = new Junction();
 		Road AtoIndustrialPark = new Road(10);
 		CarPark IndustrialPark = new CarPark(20);
+		Clock time = new Clock();
+
+		South.entryPointClock = time;
+		SouthtoA.roadClock = time;
+		A.junctionClock = time;
+		AtoIndustrialPark.roadClock = time;
+		IndustrialPark.carParkClock = time;
 
 		// Join data
 		South.road = SouthtoA;
@@ -34,6 +41,7 @@ public class Source {
 		South.start();
 		A.start();
 		IndustrialPark.start();
+		time.start();
 //		South.produce();
 //		South.produce();
 //		IndustrialPark.consume();

@@ -7,16 +7,16 @@ public class Source {
 
 		// Create data
 		EntryPoint South = new EntryPoint("South");
-		Road SouthtoCarPark = new Road(10);
-		// Junction A = new Junction();
-		// Road AtoIndustrialPark = new Road(10);
+		Road SouthtoA = new Road(10);
+		Junction A = new Junction();
+		Road AtoIndustrialPark = new Road(10);
 		CarPark IndustrialPark = new CarPark(20);
 
 		// Join data
-		South.road = SouthtoCarPark;
-		// A.entryRoad = SouthtoA;
-		// A.exitRoad = AtoIndustrialPark;
-		IndustrialPark.road = SouthtoCarPark;
+		South.road = SouthtoA;
+		A.entryRoad = SouthtoA;
+		A.exitRoad = AtoIndustrialPark;
+		IndustrialPark.road = AtoIndustrialPark;
 
 		// Main loop
 		// for (int i = 0; i < 100)
@@ -32,7 +32,7 @@ public class Source {
 		// IndustrialPark.consume();
 
 		South.start();
-		// A.start();
+		A.start();
 		IndustrialPark.start();
 //		South.produce();
 //		South.produce();

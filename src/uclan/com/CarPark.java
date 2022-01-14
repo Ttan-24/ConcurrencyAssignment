@@ -10,6 +10,7 @@ public class CarPark extends Thread { // aka consumer
 	private final int front;
 	private static int back;
 	private final int maxSize;
+	private boolean isFullCarPark;
 	// private static int size = 0;
 
 	CarPark(int _maxSize) {
@@ -40,9 +41,12 @@ public class CarPark extends Thread { // aka consumer
 					}
 				}
 				try {
-					consume();
-					road.notify();
-					Thread.sleep(1000);
+					if (isFullCarPark == false) {
+						consume();
+						road.notify();
+						Thread.sleep(1000);
+					}
+
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -64,6 +68,7 @@ public class CarPark extends Thread { // aka consumer
 		// check if the array is full
 		if (back == maxSize - 1) {
 			System.out.print("CarPark: Array is full");
+			isFullCarPark = true;
 		} else {
 			// Push
 			carParkArray[back + 1] = car;

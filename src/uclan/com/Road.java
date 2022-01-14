@@ -9,7 +9,7 @@ public class Road {
 	// array first on first out
 	private Vehicle[] roadArray;
 	private final int front;
-	public static int back;
+	public int back;
 	public final int maxSize;
 
 	Road(int _maxSize) {
@@ -60,6 +60,10 @@ public class Road {
 
 	public synchronized boolean IsEmpty() {
 		return back == -1; // the back has come all over to the front
+	}
+
+	public synchronized boolean IsFull() {
+		return back == maxSize - 1; // the back has come all over to the front
 	}
 
 	public synchronized void display() {

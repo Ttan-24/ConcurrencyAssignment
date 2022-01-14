@@ -12,25 +12,48 @@ public class EntryPoint extends Thread { // aka producer
 		name = _name;
 	}
 
-	void produce() throws InterruptedException {
-		Vehicle car = new Vehicle(idCount++);
-		road.add(car);
-		System.out.println("EntryPoint: Car " + car.id + " produced by EntryPoint " + name);
-	}
-
 	public void run() {
-		for (int i = 0; i < 10; i++) {
+		while (true) {
+			synchronized (road) {
+				while (road.back == road.maxSize - 1) {
+					try {
+						System.out.println("Queue is full, " + "Producer thread waiting for "
+								+ "consumer to take something from queue");
+						road.wait();
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				}
+				try {
+					produce();
+					road.notify();
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 
-			// System.out.println("Hi I am a EntryPoint!");
-			try {
-				produce();
-				System.out.println();
-				Thread.sleep(300);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 		}
+
+//		for (int i = 0; i < 10; i++) {
+//
+//			// System.out.println("Hi I am a EntryPoint!");
+//			try {
+//				produce();
+//				System.out.println();
+//				Thread.sleep(300);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
+	}
+
+	public void produce() throws InterruptedException {
+		Vehicle car = new Vehicle(idCount++);
+		System.out.println("EntryPoint: Car " + car.id + " produced by EntryPoint " + name);
+		road.add(car);
 	}
 
 	ArrayList<CarPark> destinationList = new ArrayList<CarPark>(); //////// dont use arraylist or any java collection

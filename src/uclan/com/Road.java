@@ -9,8 +9,8 @@ public class Road {
 	// array first on first out
 	private Vehicle[] roadArray;
 	private final int front;
-	private static int back;
-	private final int maxSize;
+	public static int back;
+	public final int maxSize;
 
 	Road(int _maxSize) {
 		front = 0;
@@ -22,35 +22,37 @@ public class Road {
 
 	public synchronized void add(Vehicle car) throws InterruptedException {
 		// check if the array is full
-		if (back == maxSize) {
-			System.out.println("Road: Array is full");
-			wait();
-			notifyAll();
-		} else {
-			// Push
-			roadArray[back + 1] = car;
-			back++;
-			System.out.println("Road: Added Car");
-			Thread.sleep(500);
-		}
+		// if (back == maxSize) {
+		// System.out.println("Road: Array is full");
+		// wait();
+		// Thread.sleep(500);
+		// notifyAll();
+		// } else {
+		// Push
+		roadArray[back + 1] = car;
+		back++;
+		System.out.println("Road: Added Car " + car.id);
+		// Thread.sleep(500);
+		// }
 	}
 
 	public synchronized Vehicle remove() throws InterruptedException {
 
-		if (IsEmpty()) {
-			// do not remove if there is nothing there to remove
-			// wait();
-			return null;
-		} else {
-			Vehicle car = roadArray[front];
-			for (int i = 0; i < back; i++) {
-				roadArray[i] = roadArray[i + 1];
-				System.out.println("Road: Removed Car");
-				Thread.sleep(500);
-			}
-			back--;
-			return car;
+		// if (IsEmpty()) {
+		// do not remove if there is nothing there to remove
+		// wait();
+		// return null;
+		// } else {
+		Vehicle car = roadArray[front];
+		for (int i = 0; i < back; i++) {
+			roadArray[i] = roadArray[i + 1];
+
+			// Thread.sleep(500);
 		}
+		System.out.println("Road: Removed Car " + car.id);
+		back--;
+		return car;
+		// }
 
 		// buffer is not full, notify all threads that the buffer is empty
 

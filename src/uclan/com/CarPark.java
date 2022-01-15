@@ -12,12 +12,14 @@ public class CarPark extends Thread { // aka consumer
 	private static int back;
 	private final int maxSize;
 	private boolean isFullCarPark;
+	private String name;
 	// private static int size = 0;
 
-	CarPark(int _maxSize) {
+	CarPark(int _maxSize, String _name) {
 		front = 0;
 		back = -1;
 		maxSize = _maxSize;
+		name = _name;
 		carParkArray = new Vehicle[maxSize]; // making a new array to specify the maxSize
 	}
 	// add
@@ -75,8 +77,8 @@ public class CarPark extends Thread { // aka consumer
 			// Push
 			carParkArray[back + 1] = car;
 			back++;
-			System.out.println("Time: " + carParkClock.time() + " - CarPark: Car " + car.id
-					+ " added to the CarPark Industrial Space");
+			System.out.println(
+					"Time: " + carParkClock.time() + " - CarPark: Car " + car.id + " added to the CarPark " + name);
 		}
 		// }
 

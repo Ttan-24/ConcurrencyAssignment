@@ -53,7 +53,7 @@ public class EntryPoint extends Thread { // aka producer
 	}
 
 	public void produce() throws InterruptedException {
-		Vehicle car = new Vehicle(idCount++);
+		Vehicle car = new Vehicle(idCount++, entryPointClock.time());
 		System.out.println(
 				"Time: " + entryPointClock.time() + " - EntryPoint: Car " + car.id + " produced by EntryPoint " + name);
 		road.add(car);

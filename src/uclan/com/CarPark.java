@@ -26,7 +26,7 @@ public class CarPark extends Thread { // aka consumer
 
 	int timestamp;
 	ArrayList<Vehicle> Cars = new ArrayList<Vehicle>();
-	Vehicle car;
+	// Vehicle car;
 
 	public void run() {
 
@@ -58,8 +58,8 @@ public class CarPark extends Thread { // aka consumer
 
 	public void consume() throws InterruptedException {
 		// remove
-
 		Vehicle car = road.remove();
+		car.parkedTime = carParkClock.time();
 		System.out
 				.println("Time: " + carParkClock.time() + " - CarPark: Car " + car.id + " removed from the entry road");
 		// if (car == null) {

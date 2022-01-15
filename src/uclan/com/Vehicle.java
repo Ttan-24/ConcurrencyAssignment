@@ -3,20 +3,17 @@ package uclan.com;
 public class Vehicle { // creating the cars in the entrypoint
 
 	private CarPark destination;
-	private int mGridlockTime;
-	private int parkedTime;
+	private String entryTime;
+	public String parkedTime;
 	public int id;
 
 	public Vehicle() {
 	}
 
-	public Vehicle(int _id) {
+	public Vehicle(int _id, String _entryTime) {
 		id = _id;
+		entryTime = _entryTime;
 	}
-
-//	public Vehicle(int gridlockTime) {
-//		mGridlockTime = gridlockTime;
-//	}
 
 	// no deconstructor as such but can use .finialise
 

@@ -2,11 +2,19 @@ package uclan.com;
 
 public class Clock extends Thread {
 
-	public int count = 0;
+	private int count = 0;
+	public int displayNumber = 10;
+
+	public CarPark carPark;
 
 	public void run() {
 		while (true) {
 			count++;
+			if (count == displayNumber) {
+				System.out.println("Time: " + time() + " - Shopping Centre: " + carPark.carSpaces() + "\n              "
+						+ "Industrial Park: " + carPark.carSpaces());
+				displayNumber += 10;
+			}
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
@@ -23,6 +31,10 @@ public class Clock extends Thread {
 		stringTimer = String.valueOf(minutes) + "m, " + String.valueOf(seconds) + "s";
 
 		return stringTimer;
+	}
+
+	public int getCount() {
+		return count;
 	}
 
 }

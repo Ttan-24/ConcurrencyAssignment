@@ -14,19 +14,21 @@ public class Source {
 		Road AtoShoppingCentre = new Road(10);
 		CarPark ShoppingCentre = new CarPark(10, "Shopping Centre");
 		Road AtoIndustrialPark = new Road(10);
-		CarPark IndustrialPark = new CarPark(20, "Industrial Park");
-		Clock time = new Clock();
+		CarPark IndustrialPark = new CarPark(20, "Industrial Space");
+		Clock clock = new Clock();
+
+		clock.carPark = IndustrialPark;
 
 		// Timings
-		South.entryPointClock = time;
-		SouthtoA.roadClock = time;
-		East.entryPointClock = time;
-		EasttoA.roadClock = time;
-		A.junctionClock = time;
-		AtoShoppingCentre.roadClock = time;
-		ShoppingCentre.carParkClock = time;
-		AtoIndustrialPark.roadClock = time;
-		IndustrialPark.carParkClock = time;
+		South.entryPointClock = clock;
+		SouthtoA.roadClock = clock;
+		East.entryPointClock = clock;
+		EasttoA.roadClock = clock;
+		A.junctionClock = clock;
+		AtoShoppingCentre.roadClock = clock;
+		ShoppingCentre.carParkClock = clock;
+		AtoIndustrialPark.roadClock = clock;
+		IndustrialPark.carParkClock = clock;
 
 		// Join data
 		South.road = SouthtoA;
@@ -38,25 +40,17 @@ public class Source {
 		ShoppingCentre.road = AtoShoppingCentre;
 		IndustrialPark.road = AtoIndustrialPark;
 
-		// Main loop
-		// for (int i = 0; i < 100)
-		// {
-		// Production consumption etc.
+		// Junction setup
+		A.addDestinationMapping("Industrial Space", 1);
+		A.addDestinationMapping("Shopping Centre", 0);
 
-		// South.Produce();
-		// South.Produce();
-		// South.Produce();
-		// A.TakeVehicle();
-		// IndustrialPark.consume();
-		// IndustrialPark.consume();
-		// IndustrialPark.consume();
-
+		// start threads
 		South.start();
 		East.start();
 		A.start();
 		IndustrialPark.start();
 		ShoppingCentre.start();
-		time.start();
+		clock.start();
 //		South.produce();
 //		South.produce();
 //		IndustrialPark.consume();

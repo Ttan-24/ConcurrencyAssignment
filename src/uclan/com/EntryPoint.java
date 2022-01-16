@@ -1,6 +1,6 @@
 package uclan.com;
 
-import java.util.ArrayList;
+import java.util.Random;
 
 public class EntryPoint extends Thread { // aka producer
 
@@ -8,6 +8,8 @@ public class EntryPoint extends Thread { // aka producer
 	Road road;
 	public int idCount = 1;
 	public String name;
+	private String[] DestinationArray = { "Industrial Space", "Shopping Centre" };
+	private Random rand = new Random();
 
 	EntryPoint(String _name) {
 		name = _name;
@@ -53,14 +55,21 @@ public class EntryPoint extends Thread { // aka producer
 	}
 
 	public void produce() throws InterruptedException {
-		Vehicle car = new Vehicle(idCount++, entryPointClock.time());
+		String destination = chooseRandomDestinations();
+		String id = "{" + name + ", " + Integer.toString(idCount) + ", " + destination + "}";
+		Vehicle car = new Vehicle(id, entryPointClock.time(), destination);
+		idCount++;
+
 		System.out.println(
 				"Time: " + entryPointClock.time() + " - EntryPoint: Car " + car.id + " produced by EntryPoint " + name);
 		road.add(car);
 	}
 
-	ArrayList<CarPark> destinationList = new ArrayList<CarPark>(); //////// dont use arraylist or any java collection
-																	//////// library
+	public String chooseRandomDestinations() {
+		int randomDestination = rand.nextInt(DestinationArray.length);
+
+		return DestinationArray[randomDestination];
+	}
 
 	int preDeterminedRate;
 	// array of vehicles generated

@@ -47,7 +47,7 @@ public class CarPark extends Thread { // aka consumer
 					if (isFullCarPark == false) {
 						consume();
 						road.notify();
-						Thread.sleep(1000);
+						Thread.sleep(10);
 					}
 
 				} catch (InterruptedException e) {
@@ -87,6 +87,12 @@ public class CarPark extends Thread { // aka consumer
 		// System.out.println("CarPark: Total cars in the Industrial carpark " + (back +
 		// 1) + " out of 1000 spaces");
 		System.out.println();
+	}
+
+	public String carSpaces() {
+		// spaces available = total array size - spaces taken
+		String spacesAvailable = String.valueOf(carParkArray.length - back);
+		return spacesAvailable;
 	}
 
 }

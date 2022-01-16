@@ -8,7 +8,8 @@ public class EntryPoint extends Thread { // aka producer
 	Road road;
 	public int idCount = 1;
 	public String name;
-	private String[] DestinationArray = { "Industrial Space", "Shopping Centre" };
+	private String[] DestinationArray = { "University", "Station", "Station", "Shopping Centre", "Shopping Centre",
+			"Shopping Centre", "Industrial Space", "Industrial Space", "Industrial Space", "Industrial Space" };
 	private Random rand = new Random();
 
 	EntryPoint(String _name) {
@@ -40,18 +41,6 @@ public class EntryPoint extends Thread { // aka producer
 			}
 		}
 
-//		for (int i = 0; i < 10; i++) {
-//
-//			// System.out.println("Hi I am a EntryPoint!");
-//			try {
-//				produce();
-//				System.out.println();
-//				Thread.sleep(300);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
 	}
 
 	public void produce() throws InterruptedException {

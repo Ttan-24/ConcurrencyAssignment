@@ -5,8 +5,8 @@ import java.util.HashMap;
 public class Junction extends Thread { // aka producer and consumer. takes in consumer and than sends out as a producer
 
 	public Clock junctionClock;
-	Road[] entryRoadArray = new Road[2];
-	Road[] exitRoadArray = new Road[2];
+	Road[] entryRoadArray = new Road[4];
+	Road[] exitRoadArray = new Road[4];
 	Road entryRoad; // consumer
 	Road exitRoad; // producer
 	int carHold = 0;
@@ -47,8 +47,8 @@ public class Junction extends Thread { // aka producer and consumer. takes in co
 		}
 	}
 
-	public void addDestinationMapping(String destination, int roadIndex) {
-		destinationMap.put(destination, roadIndex);
+	public void addDestinationMapping(String destination, int destinationRoadIndex) {
+		destinationMap.put(destination, destinationRoadIndex);
 	}
 
 	public void run() {
@@ -93,7 +93,13 @@ public class Junction extends Thread { // aka producer and consumer. takes in co
 							System.out.println("Switching Green the entry Road");
 						}
 
+						// fix index when out of bounds
 						if (entryIndex > entryRoadArray.length - 1) {
+							entryIndex = 0;
+						}
+
+						// fix index when null
+						if (entryRoadArray[entryIndex] == null) {
 							entryIndex = 0;
 						}
 

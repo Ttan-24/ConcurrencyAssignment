@@ -12,12 +12,14 @@ public class Road {
 	private final int front;
 	public int back;
 	public final int maxSize;
+	public String name;
 
-	Road(int _maxSize) {
+	Road(int _maxSize, String _name) {
 		front = 0;
 		back = -1;
 		maxSize = _maxSize;
 		roadArray = new Vehicle[maxSize]; // making a new array to specify the maxSize
+		name = _name;
 	}
 	// add
 
@@ -65,6 +67,10 @@ public class Road {
 
 	public synchronized boolean IsFull() {
 		return back == maxSize - 1; // the back has come all over to the front
+	}
+
+	public int carsQueued() {
+		return back + 1;
 	}
 
 	public synchronized void display() {

@@ -9,10 +9,11 @@ public class CarPark extends Thread { // aka consumer
 	// private final int maxSize;
 	private Vehicle[] carParkArray;
 	private final int front;
-	private static int back;
+	private int back;
 	private final int maxSize;
 	private boolean isFullCarPark;
-	private String name;
+	public String name;
+
 	// private static int size = 0;
 
 	CarPark(int _maxSize, String _name) {
@@ -93,6 +94,10 @@ public class CarPark extends Thread { // aka consumer
 		// spaces available = total array size - spaces taken
 		String spacesAvailable = String.valueOf(carParkArray.length - back);
 		return spacesAvailable;
+	}
+
+	public int getCarCount() {
+		return back + 1;
 	}
 
 }

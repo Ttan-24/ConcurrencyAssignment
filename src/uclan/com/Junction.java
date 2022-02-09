@@ -17,6 +17,11 @@ public class Junction extends Thread { // aka producer and consumer. takes in co
 	private int carsPerMinute = 12;
 	private int trafficLightDelay = 60;
 	private Vehicle car;
+	public String name;
+
+	Junction(String _name) { // needs to take time
+		name = _name;
+	}
 
 	private HashMap<String, Integer> destinationMap = new HashMap<String, Integer>();
 
@@ -25,8 +30,8 @@ public class Junction extends Thread { // aka producer and consumer. takes in co
 		// carHold = car.id;
 
 		car = entryRoadArray[entryIndex].remove();
-		System.out.println(
-				"Time: " + junctionClock.time() + " - Junction: Car " + car.id + " consumed from the entryRoad");
+		System.out.println("Time: " + junctionClock.time() + " - Junction " + name + " : Car " + car.id
+				+ " consumed from the entryRoad");
 
 		String destination = car.getDestination();
 
@@ -41,7 +46,7 @@ public class Junction extends Thread { // aka producer and consumer. takes in co
 		} else {
 
 			exitRoadArray[exitIndex].add(car);
-			System.out.println("Time: " + junctionClock.time() + " - Junction: Car " + car.id
+			System.out.println("Time: " + junctionClock.time() + " - Junction " + name + " : Car " + car.id
 					+ " taken from the entry road and sending it to the exit road: " + exitIndex + " for destination: "
 					+ destination);
 		}

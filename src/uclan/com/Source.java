@@ -1,5 +1,7 @@
 package uclan.com;
 
+import java.util.ArrayList;
+
 public class Source {
 
 	public static void main(String[] args) throws InterruptedException {
@@ -10,31 +12,64 @@ public class Source {
 		EntryPoint East = new EntryPoint("East");
 		EntryPoint North = new EntryPoint("North");
 
-		Junction A = new Junction();
-		Junction B = new Junction();
-		Junction C = new Junction();
-		Junction D = new Junction();
+		Junction A = new Junction("A");
+		Junction B = new Junction("B");
+		Junction C = new Junction("C");
+		Junction D = new Junction("D");
 
-		Road SouthtoA = new Road(10);
-		Road EasttoB = new Road(10);
-		Road NorthtoC = new Road(10);
-		Road BtoA = new Road(10);
-		Road AtoB = new Road(10);
-		Road BtoC = new Road(10);
-		Road CtoB = new Road(10);
-		Road CtoD = new Road(10);
-		Road AtoIndustrialPark = new Road(10);
-		Road CtoShoppingCentre = new Road(10);
-		Road DtoUniversity = new Road(10);
-		Road DtoStation = new Road(10);
+		Road SouthtoA = new Road(10, "SouthtoA");
+		Road EasttoB = new Road(10, "EasttoB");
+		Road NorthtoC = new Road(10, "NorthtoC");
+		Road BtoA = new Road(10, "BtoA");
+		Road AtoB = new Road(10, "AtoB");
+		Road BtoC = new Road(10, "BtoC");
+		Road CtoB = new Road(10, "CtoB");
+		Road CtoD = new Road(10, "CtoD");
+		Road AtoIndustrialPark = new Road(10, "AtoIndustrialPark");
+		Road CtoShoppingCentre = new Road(10, "CtoShoppingCentre");
+		Road DtoUniversity = new Road(10, "DtoUniversity");
+		Road DtoStation = new Road(10, "DtoStation");
 
 		CarPark ShoppingCentre = new CarPark(10, "Shopping Centre");
 		CarPark IndustrialPark = new CarPark(20, "Industrial Space");
 		CarPark Station = new CarPark(20, "Station");
 		CarPark University = new CarPark(20, "University");
 
-		Clock clock = new Clock();
-		clock.carPark = IndustrialPark;
+		//////////////////////////////////////////////////////////////// ArrayList to
+		//////////////////////////////////////////////////////////////// count the total
+		//////////////////////////////////////////////////////////////// number//////////////////////////////
+		ArrayList<CarPark> CarParkArrayList = new ArrayList<CarPark>();
+		CarParkArrayList.add(ShoppingCentre);
+		CarParkArrayList.add(IndustrialPark);
+		CarParkArrayList.add(Station);
+		CarParkArrayList.add(University);
+
+		ArrayList<EntryPoint> EntryPointArrayList = new ArrayList<EntryPoint>();
+		EntryPointArrayList.add(South);
+		EntryPointArrayList.add(East);
+		EntryPointArrayList.add(North);
+
+		ArrayList<Road> RoadArrayList = new ArrayList<Road>();
+		RoadArrayList.add(SouthtoA);
+		RoadArrayList.add(EasttoB);
+		RoadArrayList.add(NorthtoC);
+		RoadArrayList.add(BtoA);
+		RoadArrayList.add(AtoB);
+		RoadArrayList.add(BtoC);
+		RoadArrayList.add(CtoB);
+		RoadArrayList.add(CtoD);
+		RoadArrayList.add(AtoIndustrialPark);
+		RoadArrayList.add(CtoShoppingCentre);
+		RoadArrayList.add(DtoUniversity);
+		RoadArrayList.add(DtoStation);
+
+		////////////////////////////////////////// Clock to each component
+		////////////////////////////////////////// ////////////////////////////////////////////////////////////////
+		Clock clock = new Clock(CarParkArrayList, EntryPointArrayList, RoadArrayList);
+		clock.addCarPark(University);
+		clock.addCarPark(Station);
+		clock.addCarPark(ShoppingCentre);
+		clock.addCarPark(IndustrialPark);
 
 		// Timings
 		South.entryPointClock = clock;

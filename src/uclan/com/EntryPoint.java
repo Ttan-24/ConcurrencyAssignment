@@ -16,6 +16,10 @@ public class EntryPoint extends Thread { // aka producer
 		name = _name;
 	}
 
+	public int getCarsCreated() {
+		return idCount - 1;
+	}
+
 	public void run() {
 		while (true) {
 			synchronized (road) {

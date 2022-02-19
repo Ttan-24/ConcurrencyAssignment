@@ -1,21 +1,44 @@
 package uclan.com;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
 
 public class Source {
 
+	enum Roads {
+		NORTH, EAST, SOUTH, WEST
+	}
+
+	private static void detectDeadlock() {
+		ThreadMXBean threadBean = ManagementFactory.getThreadMXBean();
+		long[] threadIds = threadBean.findDeadlockedThreads();
+		boolean deadlock = threadIds != null && threadIds.length > 0;
+		System.out.println("deadlocks found: " + deadlock);
+	}
+
 	public static void main(String[] args) throws InterruptedException {
 		// TODO Auto-generated method stub
 
-		// Create data
-		EntryPoint South = new EntryPoint("South");
-		EntryPoint East = new EntryPoint("East");
-		EntryPoint North = new EntryPoint("North");
+		LogFileManager.openLog(System.getProperty("user.dir"));
+		LogFileManager.writeToLog("");
+		LogFileManager.writeToLog("");
+		LogFileManager.writeToLog(
+				"--------------------------------------------------------------------------------------------------");
 
-		Junction A = new Junction("A");
-		Junction B = new Junction("B");
-		Junction C = new Junction("C");
-		Junction D = new Junction("D");
+		LogFileManager.writeToLog("Concurrency Assignment Part 1 started.");
+		LogFileManager.writeToLog(
+				"--------------------------------------------------------------------------------------------------");
+
+		// Create data
+		EntryPoint South = new EntryPoint("South", 550);
+		EntryPoint East = new EntryPoint("East", 300);
+		EntryPoint North = new EntryPoint("North", 550);
+
+		Junction A = new Junction("A", 60);
+		Junction B = new Junction("B", 60);
+		Junction C = new Junction("C", 30);
+		Junction D = new Junction("D", 30);
 
 		Road SouthtoA = new Road(10, "SouthtoA");
 		Road EasttoB = new Road(10, "EasttoB");
@@ -31,7 +54,7 @@ public class Source {
 		Road DtoStation = new Road(10, "DtoStation");
 
 		CarPark ShoppingCentre = new CarPark(10, "Shopping Centre");
-		CarPark IndustrialPark = new CarPark(20, "Industrial Space");
+		CarPark IndustrialPark = new CarPark(20, "Industrial Park");
 		CarPark Station = new CarPark(20, "Station");
 		CarPark University = new CarPark(20, "University");
 
@@ -108,7 +131,7 @@ public class Source {
 		A.exitRoadArray[1] = AtoB;
 		A.entryRoadArray[1] = BtoA;
 
-		A.addDestinationMapping("Industrial Space", 0);
+		A.addDestinationMapping("Industrial Park", 0);
 		A.addDestinationMapping("Shopping Centre", 1);
 		A.addDestinationMapping("Station", 1);
 		A.addDestinationMapping("University", 1);
@@ -122,7 +145,7 @@ public class Source {
 		B.entryRoadArray[2] = AtoB;
 		B.exitRoadArray[1] = BtoA;
 
-		B.addDestinationMapping("Industrial Space", 1);
+		B.addDestinationMapping("Industrial Park", 1);
 		B.addDestinationMapping("Shopping Centre", 0);
 		B.addDestinationMapping("Station", 0);
 		B.addDestinationMapping("University", 0);
@@ -135,7 +158,7 @@ public class Source {
 		C.exitRoadArray[2] = CtoB;
 		C.entryRoadArray[1] = BtoC;
 
-		C.addDestinationMapping("Industrial Space", 2);
+		C.addDestinationMapping("Industrial Park", 2);
 		C.addDestinationMapping("Shopping Centre", 1);
 		C.addDestinationMapping("Station", 0);
 		C.addDestinationMapping("University", 0);

@@ -8,12 +8,14 @@ public class EntryPoint extends Thread { // aka producer
 	Road road;
 	public int idCount = 1;
 	public String name;
+	public int carsPerHour;
 	private String[] DestinationArray = { "University", "Station", "Station", "Shopping Centre", "Shopping Centre",
-			"Shopping Centre", "Industrial Space", "Industrial Space", "Industrial Space", "Industrial Space" };
+			"Shopping Centre", "Industrial Park", "Industrial Park", "Industrial Park", "Industrial Park" };
 	private Random rand = new Random();
 
-	EntryPoint(String _name) {
+	EntryPoint(String _name, int _carsPerHour) {
 		name = _name;
+		carsPerHour = _carsPerHour;
 	}
 
 	public int getCarsCreated() {
@@ -21,12 +23,22 @@ public class EntryPoint extends Thread { // aka producer
 	}
 
 	public void run() {
-		while (true) {
+
+		Alarm myAlarm = new Alarm((60 * 60) / carsPerHour);
+		myAlarm.start();
+
+		while (entryPointClock.getCount() < 119) {
+			// System.out.println(name + " is waiting to lock road: " + road.name);
 			synchronized (road) {
+				// System.out.println(name + " has locked road: " + road.name);
 				while (road.back == road.maxSize - 1) {
 					try {
-						System.out.println("Queue is full, " + "Producer thread waiting for "
+						System.out.println(name + ": " + road.name + "'s buffer is full, " + " waiting for "
 								+ "consumer to take something from queue");
+
+						LogFileManager.writeToLog((name + ": " + road.name + "'s buffer is full, " + " waiting for "
+								+ "consumer to take something from queue"));
+
 						road.wait();
 					} catch (Exception ex) {
 						ex.printStackTrace();
@@ -34,15 +46,22 @@ public class EntryPoint extends Thread { // aka producer
 				}
 				try {
 					// System.out.println("Produced at: " + entryPointClock.time());
-					produce();
-					road.notify();
-					Thread.sleep(1000);
+					if (myAlarm.hasEnded) {
+						produce();
+						road.notify();
+						myAlarm.count = ((60 * 60) / carsPerHour); // reset
+						System.out
+								.println("Time: " + entryPointClock.time() + " - EntryPoint - Resetted alarm " + name);
+						myAlarm.hasEnded = false;
+					}
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					LogFileManager.logWarning("Interrupted exception thrown in EntryPoint run");
+					LogFileManager.logError(e.getMessage());
 				}
-
 			}
+			// System.out.println(name + " is unlocking road: " + road.name);
 		}
 
 	}
@@ -50,11 +69,15 @@ public class EntryPoint extends Thread { // aka producer
 	public void produce() throws InterruptedException {
 		String destination = chooseRandomDestinations();
 		String id = "{" + name + ", " + Integer.toString(idCount) + ", " + destination + "}";
-		Vehicle car = new Vehicle(id, entryPointClock.time(), destination);
+		Vehicle car = new Vehicle(id, entryPointClock.getCount(), destination);
 		idCount++;
 
 		System.out.println(
 				"Time: " + entryPointClock.time() + " - EntryPoint: Car " + car.id + " produced by EntryPoint " + name);
+
+		LogFileManager.writeToLog(
+				"Time: " + entryPointClock.time() + " - EntryPoint: Car " + car.id + " produced by EntryPoint " + name);
+
 		road.add(car);
 	}
 

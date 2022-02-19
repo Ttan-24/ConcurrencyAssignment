@@ -34,7 +34,8 @@ public class Road {
 		// Push
 		roadArray[back + 1] = car;
 		back++;
-		System.out.println("Time: " + roadClock.time() + " - Road: Added Car " + car.id);
+		System.out.println("Time: " + roadClock.time() + " - Road " + name + " : Added Car " + car.id);
+		LogFileManager.writeToLog("Time: " + roadClock.time() + " - Road " + name + " : Added Car " + car.id);
 		// Thread.sleep(500);
 		// }
 	}
@@ -52,7 +53,8 @@ public class Road {
 
 			// Thread.sleep(500);
 		}
-		System.out.println("Time: " + roadClock.time() + " - Road: Removed Car " + car.id);
+		System.out.println("Time: " + roadClock.time() + " - Road " + name + " : Removed Car " + car.id);
+		LogFileManager.writeToLog("Time: " + roadClock.time() + " - Road " + name + " : Removed Car " + car.id);
 		back--;
 		return car;
 		// }
@@ -61,12 +63,25 @@ public class Road {
 
 	}
 
+	public synchronized Vehicle getFrontCar() throws InterruptedException {
+		Vehicle car = roadArray[front];
+		return car;
+	}
+
 	public synchronized boolean IsEmpty() {
 		return back == -1; // the back has come all over to the front
 	}
 
+	public synchronized boolean hasCar() {
+		return !IsEmpty(); // the back has come all over to the front
+	}
+
 	public synchronized boolean IsFull() {
 		return back == maxSize - 1; // the back has come all over to the front
+	}
+
+	public synchronized boolean hasSpace() {
+		return !IsFull();
 	}
 
 	public int carsQueued() {
@@ -91,19 +106,15 @@ public class Road {
 	// circular buffer enforcing a strict ordering to the addition and removal of
 	// cars
 	// check if the CarList is empty by the junction and the entrypoint
-	public Boolean hasSpace() { // isFull
-		// is carList size less than the max number
-		return false;
-	}
 
 	// if there is hasspace true then add the car to make the size equal to the max
 	// number
 	// if not then keep adding cars
 
-	public Boolean hasCar() { // to check if there is anything on the road to come into the junction or the
-								// car park
-		return false;
-	}
+//	public Boolean hasCar() { // to check if there is anything on the road to come into the junction or the
+//								// car park
+//		return false;
+//	}
 
 	// thread-safe
 

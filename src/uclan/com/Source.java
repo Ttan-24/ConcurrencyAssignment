@@ -1,8 +1,12 @@
 package uclan.com;
 
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Source {
 
@@ -17,7 +21,7 @@ public class Source {
 		System.out.println("deadlocks found: " + deadlock);
 	}
 
-	public static void main(String[] args) throws InterruptedException {
+	public static void main(String[] args) throws InterruptedException, IOException {
 		// TODO Auto-generated method stub
 
 		LogFileManager.openLog(System.getProperty("user.dir"));
@@ -30,15 +34,51 @@ public class Source {
 		LogFileManager.writeToLog(
 				"--------------------------------------------------------------------------------------------------");
 
-		// Create data
-		EntryPoint South = new EntryPoint("South", 550);
-		EntryPoint East = new EntryPoint("East", 300);
-		EntryPoint North = new EntryPoint("North", 550);
+		////////////////////////////////// Taking from the config
+		////////////////////////////////// file/////////////////////////////////////////////////////////
+		Scanner InputScan = new Scanner(System.in);
+		System.out.println("Enter a file: ");
 
-		Junction A = new Junction("A", 60);
-		Junction B = new Junction("B", 60);
-		Junction C = new Junction("C", 30);
-		Junction D = new Junction("D", 30);
+		String configFileName = InputScan.nextLine();
+		System.out.println("Entered file is: " + configFileName);
+
+		Path configFilePath = Path.of(System.getProperty("user.dir") + configFileName);
+
+		String string = Files.readString(configFilePath);
+		String[] elements = string.split("\n");
+
+		String entryPointNorthString = elements[1].split(" ")[1].replaceAll("\\s+", "");
+		int entryPointNorth = Integer.valueOf(entryPointNorthString);
+
+		String entryPointEastString = elements[2].split(" ")[1].replaceAll("\\s+", "");
+		int entryPointEast = Integer.valueOf(entryPointEastString);
+
+		String entryPointSouthString = elements[3].split(" ")[1].replaceAll("\\s+", "");
+		int entryPointSouth = Integer.valueOf(entryPointSouthString);
+
+		String JunctionAString = elements[6].split(" ")[1].replaceAll("\\s+", "");
+		int JunctionA = Integer.valueOf(JunctionAString);
+
+		String JunctionBString = elements[7].split(" ")[1].replaceAll("\\s+", "");
+		int JunctionB = Integer.valueOf(JunctionBString);
+
+		String JunctionCString = elements[8].split(" ")[1].replaceAll("\\s+", "");
+		int JunctionC = Integer.valueOf(JunctionCString);
+
+		String JunctionDString = elements[9].split(" ")[1].replaceAll("\\s+", "");
+		int JunctionD = Integer.valueOf(JunctionDString);
+
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		// Create data
+		EntryPoint North = new EntryPoint("North", entryPointNorth);
+		EntryPoint East = new EntryPoint("East", entryPointEast);
+		EntryPoint South = new EntryPoint("South", entryPointSouth);
+
+		Junction A = new Junction("A", JunctionA);
+		Junction B = new Junction("B", JunctionB);
+		Junction C = new Junction("C", JunctionC);
+		Junction D = new Junction("D", JunctionD);
 
 		Road SouthtoA = new Road(10, "SouthtoA");
 		Road EasttoB = new Road(10, "EasttoB");

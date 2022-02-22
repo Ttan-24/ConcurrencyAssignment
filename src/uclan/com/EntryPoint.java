@@ -4,54 +4,57 @@ import java.util.Random;
 
 public class EntryPoint extends Thread { // aka producer
 
+	// member variables
 	public Clock entryPointClock;
 	Road road;
 	public int idCount = 1;
 	public String name;
 	public int carsPerHour;
+
+	// weighting
 	private String[] DestinationArray = { "University", "Station", "Station", "Shopping Centre", "Shopping Centre",
 			"Shopping Centre", "Industrial Park", "Industrial Park", "Industrial Park", "Industrial Park" };
 	private Random rand = new Random();
 
+	// constructor
 	EntryPoint(String _name, int _carsPerHour) {
 		name = _name;
 		carsPerHour = _carsPerHour;
 	}
 
+	// get how many cars created
 	public int getCarsCreated() {
 		return idCount - 1;
 	}
 
+	// run method - checks and produces cars until the road is full
 	public void run() {
 
+		// create alarm
 		Alarm myAlarm = new Alarm((60 * 60) / carsPerHour);
 		myAlarm.start();
 
-		while (entryPointClock.getCount() < 119) {
-			// System.out.println(name + " is waiting to lock road: " + road.name);
+		// main loop
+		while (entryPointClock.getCount() < entryPointClock.simulationTime) {
+			// locking road
 			synchronized (road) {
-				// System.out.println(name + " has locked road: " + road.name);
-				while (road.back == road.maxSize - 1) {
+				// if road is full wait and notify till the cars are consumed
+				while (road.IsFull()) {
 					try {
-						System.out.println(name + ": " + road.name + "'s buffer is full, " + " waiting for "
-								+ "consumer to take something from queue");
-
-						LogFileManager.writeToLog((name + ": " + road.name + "'s buffer is full, " + " waiting for "
-								+ "consumer to take something from queue"));
-
-						road.wait();
+						road.notify();
+						road.wait(100);
 					} catch (Exception ex) {
 						ex.printStackTrace();
 					}
 				}
 				try {
-					// System.out.println("Produced at: " + entryPointClock.time());
+					// produce and reset alarm
 					if (myAlarm.hasEnded) {
 						produce();
 						road.notify();
-						myAlarm.count = ((60 * 60) / carsPerHour); // reset
-						System.out
-								.println("Time: " + entryPointClock.time() + " - EntryPoint - Resetted alarm " + name);
+						myAlarm.reset();
+						LogFileManager.writeToLog(
+								"Time: " + entryPointClock.time() + " - EntryPoint - Resetted alarm " + name);
 						myAlarm.hasEnded = false;
 					}
 				} catch (InterruptedException e) {
@@ -61,19 +64,17 @@ public class EntryPoint extends Thread { // aka producer
 					LogFileManager.logError(e.getMessage());
 				}
 			}
-			// System.out.println(name + " is unlocking road: " + road.name);
 		}
 
 	}
 
+	// produce - produce cars on the road as per the weightings with random
+	// destinations
 	public void produce() throws InterruptedException {
 		String destination = chooseRandomDestinations();
 		String id = "{" + name + ", " + Integer.toString(idCount) + ", " + destination + "}";
 		Vehicle car = new Vehicle(id, entryPointClock.getCount(), destination);
 		idCount++;
-
-		System.out.println(
-				"Time: " + entryPointClock.time() + " - EntryPoint: Car " + car.id + " produced by EntryPoint " + name);
 
 		LogFileManager.writeToLog(
 				"Time: " + entryPointClock.time() + " - EntryPoint: Car " + car.id + " produced by EntryPoint " + name);
@@ -81,27 +82,11 @@ public class EntryPoint extends Thread { // aka producer
 		road.add(car);
 	}
 
+	// chooseRandomDestinations - chooses random destinations for the cars as per
+	// the weighting required
 	public String chooseRandomDestinations() {
 		int randomDestination = rand.nextInt(DestinationArray.length);
 
 		return DestinationArray[randomDestination];
-	}
-
-	int preDeterminedRate;
-	// array of vehicles generated
-
-	void generateVehicleObjects() {
-		// generate Vehicle objects with destinations at a pre-determined rate, and feed
-		// them into the road network as long as space is available on the road.
-	}
-
-	// give the car a timestamp when it entered the town
-	void carTimestamp() {
-
-	}
-
-	// destinations of cars should be weighted randomly
-	CarPark getRandomDestination() {
-		return null;
 	}
 }

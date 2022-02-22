@@ -4,18 +4,19 @@ import java.util.ArrayList;
 
 public class CarPark extends Thread { // aka consumer
 
+	// member variables
 	public Clock carParkClock;
 	Road road;
-	// private final int maxSize;
 	private Vehicle[] carParkArray;
 	private final int front;
 	private int back;
 	private final int maxSize;
 	private boolean isFullCarPark;
 	public String name;
+	int carAdmissionTime = 12;
+	ArrayList<Vehicle> Cars = new ArrayList<Vehicle>();
 
-	// private static int size = 0;
-
+	// constructor
 	CarPark(int _maxSize, String _name) {
 		front = 0;
 		back = -1;
@@ -23,28 +24,21 @@ public class CarPark extends Thread { // aka consumer
 		name = _name;
 		carParkArray = new Vehicle[maxSize]; // making a new array to specify the maxSize
 	}
-	// add
 
-	// void add()
-
-	int timestamp;
-	ArrayList<Vehicle> Cars = new ArrayList<Vehicle>();
-	// Vehicle car;
-
+	// run method - Checks and consumes cars
 	public void run() {
-		System.out.println(name + "Started");
+		LogFileManager.writeToLog(name + " Started");
 
-		Alarm myAlarm = new Alarm(12);
+		// create alarm
+		Alarm myAlarm = new Alarm(carAdmissionTime);
 		myAlarm.start();
 
-		while (carParkClock.getCount() < 119) {
+		// main loop
+		while (carParkClock.getCount() < carParkClock.simulationTime) {
 			// locking road
-			// System.out.println("Locking road: " + road.name);
-
 			synchronized (road) {
+				// wait for road to be empty
 				while (road.IsEmpty()) {
-					System.out.println("Time: " + carParkClock.time() + " - CarPark: " + name + " is waiting"
-							+ " for road " + road.name + " to have a car");
 					LogFileManager.writeToLog("Time: " + carParkClock.time() + " - CarPark: " + name + " is waiting"
 							+ " for road " + road.name + " to have a car");
 					try {
@@ -54,11 +48,13 @@ public class CarPark extends Thread { // aka consumer
 					}
 				}
 				try {
+					// consume and reset alarm
 					if (isFullCarPark == false && myAlarm.hasEnded) {
 						consume();
 						road.notify();
-						myAlarm.count = 12; // reset
-						System.out.println("Time: " + carParkClock.time() + " - CarPark - Resetted alarm " + name);
+						myAlarm.reset();
+						LogFileManager
+								.writeToLog("Time: " + carParkClock.time() + " - CarPark - Resetted alarm " + name);
 						myAlarm.hasEnded = false;
 					}
 
@@ -69,62 +65,45 @@ public class CarPark extends Thread { // aka consumer
 					LogFileManager.logError(e.getMessage());
 				}
 			}
-			// unlocking road
-//			if (myAlarm.hasEnded) {
-//				myAlarm.count = 12; // reset
-//				System.out.println("Resetted alarm " + name);
-//				myAlarm.hasEnded = false;
-//			}
-
 		}
 	}
 
+	// consume method - consumes car from the road and pushes it into the car park
+	// array
 	public void consume() throws InterruptedException {
-		// remove
+		// remove car from the road
 		Vehicle car = road.remove();
 		car.parkedTime = carParkClock.getCount();
-		System.out
-				.println("Time: " + carParkClock.time() + " - CarPark: Car " + car.id + " removed from the entry road");
 		LogFileManager.writeToLog(
 				"Time: " + carParkClock.time() + " - CarPark: Car " + car.id + " removed from the entry road");
-		// if (car == null) {
-		// System.out.println("CarPark cannot find car...");
-		// Thread.sleep(500);
-		// } else {
 
 		// check if the array is full
 		if (back == maxSize - 1) {
-			System.out.print("Time: " + carParkClock.time() + " - CarPark: Array is full");
 			LogFileManager.writeToLog("Time: " + carParkClock.time() + " - CarPark: Array is full");
 			isFullCarPark = true;
 		} else {
-			// Push
+			// push in the car park array
 			carParkArray[back + 1] = car;
 			back++;
-			System.out.println(
-					"Time: " + carParkClock.time() + " - CarPark: Car " + car.id + " added to the CarPark " + name);
 			LogFileManager.writeToLog(
 					"Time: " + carParkClock.time() + " - CarPark: Car " + car.id + " added to the CarPark " + name);
 		}
-		// }
-
-		// carParkArray.add();
-		// System.out.println();
-		// System.out.println("CarPark: Total cars in the Industrial carpark " + (back +
-		// 1) + " out of 1000 spaces");
-		// System.out.println();
 	}
 
+	// carSpaces - available space in the car park array
 	public String carSpaces() {
 		// spaces available = total array size - spaces taken
 		String spacesAvailable = String.valueOf(carParkArray.length - back);
 		return spacesAvailable;
 	}
 
+	// getCarCount - cars parked
 	public int getCarCount() {
 		return back + 1;
 	}
 
+	// getAverageTime - average journey time for all cars to get to a car
+	// park
 	public int getAverageTime() {
 		if (getCarCount() == 0) {
 			return 0;

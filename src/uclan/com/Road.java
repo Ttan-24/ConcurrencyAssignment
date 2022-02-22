@@ -1,11 +1,10 @@
 package uclan.com;
 
-import java.util.ArrayList;
-
 // road sections acts as a passive buffer
 // acts as queue data structure
 public class Road {
 
+	// member variables
 	public Clock roadClock;
 	// array first on first out
 	private Vehicle[] roadArray;
@@ -14,6 +13,7 @@ public class Road {
 	public final int maxSize;
 	public String name;
 
+	// constructor
 	Road(int _maxSize, String _name) {
 		front = 0;
 		back = -1;
@@ -21,105 +21,61 @@ public class Road {
 		roadArray = new Vehicle[maxSize]; // making a new array to specify the maxSize
 		name = _name;
 	}
-	// add
 
+	// add vehicle to the road array
 	public synchronized void add(Vehicle car) throws InterruptedException {
-		// check if the array is full
-		// if (back == maxSize) {
-		// System.out.println("Road: Array is full");
-		// wait();
-		// Thread.sleep(500);
-		// notifyAll();
-		// } else {
-		// Push
 		roadArray[back + 1] = car;
 		back++;
-		System.out.println("Time: " + roadClock.time() + " - Road " + name + " : Added Car " + car.id);
 		LogFileManager.writeToLog("Time: " + roadClock.time() + " - Road " + name + " : Added Car " + car.id);
-		// Thread.sleep(500);
-		// }
 	}
 
+	// remove vehicle from the road array
 	public synchronized Vehicle remove() throws InterruptedException {
 
-		// if (IsEmpty()) {
-		// do not remove if there is nothing there to remove
-		// wait();
-		// return null;
-		// } else {
 		Vehicle car = roadArray[front];
 		for (int i = 0; i < back; i++) {
 			roadArray[i] = roadArray[i + 1];
-
-			// Thread.sleep(500);
 		}
-		System.out.println("Time: " + roadClock.time() + " - Road " + name + " : Removed Car " + car.id);
 		LogFileManager.writeToLog("Time: " + roadClock.time() + " - Road " + name + " : Removed Car " + car.id);
 		back--;
 		return car;
-		// }
-
-		// buffer is not full, notify all threads that the buffer is empty
-
 	}
 
+	// get first car - for consuming in the Junction
 	public synchronized Vehicle getFrontCar() throws InterruptedException {
 		Vehicle car = roadArray[front];
 		return car;
 	}
 
+	// if the road is empty
 	public synchronized boolean IsEmpty() {
 		return back == -1; // the back has come all over to the front
 	}
 
+	// if the road has car
 	public synchronized boolean hasCar() {
 		return !IsEmpty(); // the back has come all over to the front
 	}
 
+	// if the road is full
 	public synchronized boolean IsFull() {
 		return back == maxSize - 1; // the back has come all over to the front
 	}
 
+	// if the road has space
 	public synchronized boolean hasSpace() {
 		return !IsFull();
 	}
 
+	// to get cars queued in the road
 	public int carsQueued() {
 		return back + 1;
 	}
 
+	// to display in logs
 	public synchronized void display() {
 		for (int i = 0; i <= back; i++) {
 			System.out.println(roadArray[i]);
 		}
-	}
-
-	// remove
-
-	// create an array
-	// store the car objects in the array as they pass in and out (capacity
-	// according
-	// to the configuration of the simulation)
-
-	ArrayList<Vehicle> CarList = new ArrayList<Vehicle>();
-
-	// circular buffer enforcing a strict ordering to the addition and removal of
-	// cars
-	// check if the CarList is empty by the junction and the entrypoint
-
-	// if there is hasspace true then add the car to make the size equal to the max
-	// number
-	// if not then keep adding cars
-
-//	public Boolean hasCar() { // to check if there is anything on the road to come into the junction or the
-//								// car park
-//		return false;
-//	}
-
-	// thread-safe
-
-	// check if there is space and then gonna call the below function addCar
-	public void addCar(Vehicle car) {
-
 	}
 }

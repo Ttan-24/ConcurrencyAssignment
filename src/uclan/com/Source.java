@@ -1,8 +1,6 @@
 package uclan.com;
 
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.lang.management.ThreadMXBean;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -12,13 +10,6 @@ public class Source {
 
 	enum Roads {
 		NORTH, EAST, SOUTH, WEST
-	}
-
-	private static void detectDeadlock() {
-		ThreadMXBean threadBean = ManagementFactory.getThreadMXBean();
-		long[] threadIds = threadBean.findDeadlockedThreads();
-		boolean deadlock = threadIds != null && threadIds.length > 0;
-		System.out.println("deadlocks found: " + deadlock);
 	}
 
 	public static void main(String[] args) throws InterruptedException, IOException {
@@ -34,13 +25,13 @@ public class Source {
 		LogFileManager.writeToLog(
 				"--------------------------------------------------------------------------------------------------");
 
-		////////////////////////////////// Taking from the config
-		////////////////////////////////// file/////////////////////////////////////////////////////////
+		////////////////////////////////// File Input
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		Scanner InputScan = new Scanner(System.in);
-		System.out.println("Enter a file: ");
+		LogFileManager.writeToLog("Enter a file: ");
 
 		String configFileName = InputScan.nextLine();
-		System.out.println("Entered file is: " + configFileName);
+		LogFileManager.writeToLog("Entered file is: " + configFileName);
 
 		Path configFilePath = Path.of(System.getProperty("user.dir") + configFileName);
 
@@ -71,47 +62,57 @@ public class Source {
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		// Create data
+		// EntryPoints
 		EntryPoint North = new EntryPoint("North", entryPointNorth);
 		EntryPoint East = new EntryPoint("East", entryPointEast);
 		EntryPoint South = new EntryPoint("South", entryPointSouth);
 
+		// Junctions
 		Junction A = new Junction("A", JunctionA);
 		Junction B = new Junction("B", JunctionB);
 		Junction C = new Junction("C", JunctionC);
 		Junction D = new Junction("D", JunctionD);
 
-		Road SouthtoA = new Road(10, "SouthtoA");
-		Road EasttoB = new Road(10, "EasttoB");
-		Road NorthtoC = new Road(10, "NorthtoC");
-		Road BtoA = new Road(10, "BtoA");
-		Road AtoB = new Road(10, "AtoB");
+		// Roads
+		Road SouthtoA = new Road(60, "SouthtoA");
+		Road EasttoB = new Road(30, "EasttoB");
+		Road NorthtoC = new Road(50, "NorthtoC");
+		Road BtoA = new Road(7, "BtoA");
+		Road AtoB = new Road(7, "AtoB");
 		Road BtoC = new Road(10, "BtoC");
 		Road CtoB = new Road(10, "CtoB");
 		Road CtoD = new Road(10, "CtoD");
-		Road AtoIndustrialPark = new Road(10, "AtoIndustrialPark");
-		Road CtoShoppingCentre = new Road(10, "CtoShoppingCentre");
-		Road DtoUniversity = new Road(10, "DtoUniversity");
-		Road DtoStation = new Road(10, "DtoStation");
+		Road AtoIndustrialPark = new Road(15, "AtoIndustrialPark");
+		Road CtoShoppingCentre = new Road(7, "CtoShoppingCentre");
+		Road DtoUniversity = new Road(15, "DtoUniversity");
+		Road DtoStation = new Road(15, "DtoStation");
 
-		CarPark ShoppingCentre = new CarPark(10, "Shopping Centre");
-		CarPark IndustrialPark = new CarPark(20, "Industrial Park");
-		CarPark Station = new CarPark(20, "Station");
-		CarPark University = new CarPark(20, "University");
+		// Car Parks
+		CarPark ShoppingCentre = new CarPark(400, "Shopping Centre");
+		CarPark IndustrialPark = new CarPark(1000, "Industrial Park");
+		CarPark Station = new CarPark(150, "Station");
+		CarPark University = new CarPark(100, "University");
 
 		//////////////////////////////////////////////////////////////// ArrayList to
 		//////////////////////////////////////////////////////////////// count the total
-		//////////////////////////////////////////////////////////////// number//////////////////////////////
+		//////////////////////////////////////////////////////////////// number of cars
+		//////////////////////////////////////////////////////////////// created, parked
+		//////////////////////////////////////////////////////////////// and queued
+		//////////////////////////////////////////////////////////////// //////////////////////////////
+		// Car Parks
 		ArrayList<CarPark> CarParkArrayList = new ArrayList<CarPark>();
 		CarParkArrayList.add(ShoppingCentre);
 		CarParkArrayList.add(IndustrialPark);
 		CarParkArrayList.add(Station);
 		CarParkArrayList.add(University);
 
+		// EntryPoints
 		ArrayList<EntryPoint> EntryPointArrayList = new ArrayList<EntryPoint>();
 		EntryPointArrayList.add(South);
 		EntryPointArrayList.add(East);
 		EntryPointArrayList.add(North);
 
+		// Roads
 		ArrayList<Road> RoadArrayList = new ArrayList<Road>();
 		RoadArrayList.add(SouthtoA);
 		RoadArrayList.add(EasttoB);
@@ -135,15 +136,18 @@ public class Source {
 		clock.addCarPark(IndustrialPark);
 
 		// Timings
+		// EntryPoints
 		South.entryPointClock = clock;
 		East.entryPointClock = clock;
 		North.entryPointClock = clock;
 
+		// Junctions
 		A.junctionClock = clock;
 		B.junctionClock = clock;
 		C.junctionClock = clock;
 		D.junctionClock = clock;
 
+		// Roads
 		SouthtoA.roadClock = clock;
 		EasttoB.roadClock = clock;
 		NorthtoC.roadClock = clock;
@@ -157,6 +161,7 @@ public class Source {
 		DtoUniversity.roadClock = clock;
 		DtoStation.roadClock = clock;
 
+		// Car Parks
 		ShoppingCentre.carParkClock = clock;
 		IndustrialPark.carParkClock = clock;
 		Station.carParkClock = clock;
@@ -230,15 +235,6 @@ public class Source {
 		Station.start();
 		University.start();
 		clock.start();
-
-		// Display updated results
-		// System.out.println("Total cars produced: " + (South.idCount - 1));
-		// System.out.println("Total cars in road: ");
-		// total cars in the road
-		// total cars in the carpark
-		// System.out.println("Total cars in the Industrial carpark " + " out of 1000
-		// spaces");
-		// }
 	}
 
 }

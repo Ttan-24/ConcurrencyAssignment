@@ -28,7 +28,7 @@ public class Junction extends Thread { // aka producer and consumer. takes in co
 
 	// takeVehicle - taking the car from the entry road to later be sent to the exit
 	// road
-	void takeVehicle() throws InterruptedException {
+	void takeVehicle() {
 		car = entryRoadArray[entryIndex].remove();
 
 		LogFileManager.writeToLog("Time: " + junctionClock.time() + " - Junction " + name + " : Car " + car.id
@@ -45,7 +45,7 @@ public class Junction extends Thread { // aka producer and consumer. takes in co
 
 	// sendVehicle - sending the car to the exit road as per the destination of that
 	// car
-	void sendVehicle() throws InterruptedException {
+	void sendVehicle() {
 		String destination = car.getDestination();
 		if (car == null) {
 			LogFileManager.writeToLog("Junction cannot find car...");
@@ -65,96 +65,195 @@ public class Junction extends Thread { // aka producer and consumer. takes in co
 		destinationMap.put(destination, destinationRoadIndex);
 	}
 
-	// run method - produces and consumes cars by having an entry and exit road
-	// array
 	public void run() {
-		// create alarms
-		Alarm myLightAlarm = new Alarm(greenLightTime);
+		Alarm myLightAlarm = new Alarm(greenLightTime, this, true);
 		myLightAlarm.start();
 
-		Alarm myCarAlarm = new Alarm(carAlarmTime);
+		Alarm myCarAlarm = new Alarm(carAlarmTime, this, false);
 		myCarAlarm.start();
 
-		// main loop
+		// Main loop
 		while (junctionClock.getCount() < junctionClock.simulationTime) {
-			// remember if vehicle was sent to notify entry road
-			boolean sentVehicle = false;
-			// lock entry road
-			synchronized (entryRoadArray[entryIndex]) {
-				// send car if entry road has one
-				if (entryRoadArray[entryIndex].hasCar() && myCarAlarm.hasEnded) {
-					myCarAlarm.hasEnded = false;
-					myCarAlarm.reset();
-					// need to get correct exit
-					Vehicle frontCar;
+			Road entryRoad = entryRoadArray[entryIndex];
+
+			synchronized (entryRoad) {
+				// Keep eating until empty
+				while (!entryRoad.IsEmpty() && myLightAlarm.count >= 0) {
+					// Eat from bowl
+					System.out.println(name + " eating " + entryRoad.name);
+
+					while (!myCarAlarm.hasEnded) {
+						// wait for previous car to cross
+						System.out.print("");
+					}
+
+					Vehicle frontCar = entryRoadArray[entryIndex].getFrontCar();
+
+					exitIndex = destinationMap.get(frontCar.getDestination());
+					Road exitRoad = exitRoadArray[exitIndex];
+					synchronized (exitRoad) {
+						if (exitRoad.hasSpace()) {
+
+							takeVehicle();
+							sendVehicle();
+							vehicleSentCount++;
+							myCarAlarm.reset();
+						}
+						exitRoad.notify();
+						// entryRoad.wait(100);
+					}
+
+					entryRoad.notify();
 					try {
-						frontCar = entryRoadArray[entryIndex].getFrontCar();
-						if (destinationMap.containsKey(frontCar.getDestination())) {
-							exitIndex = destinationMap.get(frontCar.getDestination());
-						}
-					} catch (InterruptedException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+						entryRoad.wait(5); // Give a chance for maker
+					} catch (InterruptedException e) {
+
 					}
-					// lock exit road
-					synchronized (exitRoadArray[exitIndex]) {
-						// send car
-						if (exitRoadArray[exitIndex].hasSpace()) {
-							try {
-								takeVehicle();
-								sendVehicle();
-								vehicleSentCount++;
-								sentVehicle = true;
-							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
-						exitRoadArray[exitIndex].notify();
+				}
+
+				// If alarm has not ended, keep waiting for soup
+				if (entryRoad.IsEmpty()) {
+					// Wait for it to have soup
+					try {
+						entryRoad.wait();
+					} catch (Exception e) // Interrupted by alarm
+					{
+						// Maybe use this?
+						System.out.println("Eater interrupted!");
 					}
-					// unlock exit road
+
 				}
-				if (sentVehicle == true) {
-					entryRoadArray[entryIndex].notify();
-					sentVehicle = false;
+
+				// If alarm has ended, move to next soup
+				if (myLightAlarm.count <= 0) {
+
+					// record cars that went through
+					String previousRoad = entryRoad.name;
+
+					// Move to next soup
+					entryIndex++;
+					if (entryIndex == entryRoadArray.length - 1) {
+						entryIndex = 0;
+					}
+
+					if (entryRoadArray[entryIndex] == null) {
+						entryIndex = 0;
+					}
+
+					String nextRoad = entryRoadArray[entryIndex].name;
+
+					LogFileManager.writeToLog("Time: " + junctionClock.time() + " - Junction " + name
+							+ " : Switched from road " + previousRoad + " to " + nextRoad);
+
+					LogFileManager.writeToLogWithoutEndLine("Time: " + junctionClock.time() + " - Junction " + name
+							+ " : " + vehicleSentCount + " cars through from " + previousRoad + ", "
+							+ entryRoadArray[entryIndex].carsQueued() + " cars waiting.");
+
+					if (entryRoadArray[entryIndex].carsQueued() > 0 && vehicleSentCount == 0) {
+						LogFileManager.writeToLogWithoutEndLine(" GRIDLOCK");
+					}
+					LogFileManager.writeToLog("\n");
+					vehicleSentCount = 0;
+
+					// Reset alarm
+					myLightAlarm.reset();
 				}
+
+				// Otherwise, just continue eating this soup
 			}
-
-			// unlock entry road
-
-			// change entry road if light alarm has ended
-			if (myLightAlarm.hasEnded) {
-				String previousRoad = entryRoadArray[entryIndex].name;
-
-				entryIndex++;
-
-				if (entryIndex > entryRoadArray.length - 1) {
-					entryIndex = 0;
-				}
-
-				if (entryRoadArray[entryIndex] == null) {
-					entryIndex = 0;
-				}
-				String nextRoad = entryRoadArray[entryIndex].name;
-
-				LogFileManager.writeToLog("Time: " + junctionClock.time() + " - Junction " + name
-						+ " : Switched from road " + previousRoad + " to " + nextRoad);
-
-				LogFileManager.writeToLogWithoutEndLine("Time: " + junctionClock.time() + " - Junction " + name + " : "
-						+ vehicleSentCount + " cars through from " + previousRoad + ", "
-						+ entryRoadArray[entryIndex].carsQueued() + " cars waiting.");
-
-				if (entryRoadArray[entryIndex].carsQueued() > 0 && vehicleSentCount == 0) {
-					LogFileManager.writeToLogWithoutEndLine(" GRIDLOCK");
-				}
-				LogFileManager.writeToLog("\n");
-				vehicleSentCount = 0;
-				myLightAlarm.hasEnded = false;
-				myLightAlarm.reset();
-
-			}
-
 		}
-
 	}
+
+//	// run method - produces and consumes cars by having an entry and exit road
+//	// array
+//	public void run() {
+//		// create alarms
+//		Alarm myLightAlarm = new Alarm(greenLightTime);
+//		myLightAlarm.start();
+//
+//		Alarm myCarAlarm = new Alarm(carAlarmTime);
+//		myCarAlarm.start();
+//
+//		// main loop
+//		while (junctionClock.getCount() < junctionClock.simulationTime) {
+//			// remember if vehicle was sent to notify entry road
+//			boolean sentVehicle = false;
+//			// lock entry road
+//			synchronized (entryRoadArray[entryIndex]) {
+//				// send car if entry road has one
+//				if (entryRoadArray[entryIndex].hasCar() && myCarAlarm.hasEnded) {
+//					myCarAlarm.hasEnded = false;
+//					myCarAlarm.reset();
+//					// need to get correct exit
+//					Vehicle frontCar;
+//					try {
+//						frontCar = entryRoadArray[entryIndex].getFrontCar();
+//						if (destinationMap.containsKey(frontCar.getDestination())) {
+//							exitIndex = destinationMap.get(frontCar.getDestination());
+//						}
+//					} catch (InterruptedException e1) {
+//						// TODO Auto-generated catch block
+//						e1.printStackTrace();
+//					}
+//					// lock exit road
+//					synchronized (exitRoadArray[exitIndex]) {
+//						// send car
+//						if (exitRoadArray[exitIndex].hasSpace()) {
+//							try {
+//								takeVehicle();
+//								sendVehicle();
+//								vehicleSentCount++;
+//								sentVehicle = true;
+//							} catch (InterruptedException e) {
+//								// TODO Auto-generated catch block
+//								e.printStackTrace();
+//							}
+//						}
+//						exitRoadArray[exitIndex].notify();
+//					}
+//					// unlock exit road
+//				}
+//				if (sentVehicle == true) {
+//					entryRoadArray[entryIndex].notify();
+//					sentVehicle = false;
+//				}
+//			}
+//
+//			// unlock entry road
+//
+//			// change entry road if light alarm has ended
+//			if (myLightAlarm.hasEnded) {
+//				String previousRoad = entryRoadArray[entryIndex].name;
+//
+//				entryIndex++;
+//
+//				if (entryIndex > entryRoadArray.length - 1) {
+//					entryIndex = 0;
+//				}
+//
+//				if (entryRoadArray[entryIndex] == null) {
+//					entryIndex = 0;
+//				}
+//				String nextRoad = entryRoadArray[entryIndex].name;
+//
+//				LogFileManager.writeToLog("Time: " + junctionClock.time() + " - Junction " + name
+//						+ " : Switched from road " + previousRoad + " to " + nextRoad);
+//
+//				LogFileManager.writeToLogWithoutEndLine("Time: " + junctionClock.time() + " - Junction " + name + " : "
+//						+ vehicleSentCount + " cars through from " + previousRoad + ", "
+//						+ entryRoadArray[entryIndex].carsQueued() + " cars waiting.");
+//
+//				if (entryRoadArray[entryIndex].carsQueued() > 0 && vehicleSentCount == 0) {
+//					LogFileManager.writeToLogWithoutEndLine(" GRIDLOCK");
+//				}
+//				LogFileManager.writeToLog("\n");
+//				vehicleSentCount = 0;
+//				myLightAlarm.hasEnded = false;
+//				myLightAlarm.reset();
+//
+//			}
+//
+//		}
+//
+//	}
 }

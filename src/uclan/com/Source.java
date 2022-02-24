@@ -8,10 +8,6 @@ import java.util.Scanner;
 
 public class Source {
 
-	enum Roads {
-		NORTH, EAST, SOUTH, WEST
-	}
-
 	public static void main(String[] args) throws InterruptedException, IOException {
 		// TODO Auto-generated method stub
 

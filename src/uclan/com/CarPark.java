@@ -30,7 +30,7 @@ public class CarPark extends Thread { // aka consumer
 		LogFileManager.writeToLog(name + " Started");
 
 		// create alarm
-		Alarm myAlarm = new Alarm(carAdmissionTime);
+		Alarm myAlarm = new Alarm(carAdmissionTime, this, false);
 		myAlarm.start();
 
 		// main loop

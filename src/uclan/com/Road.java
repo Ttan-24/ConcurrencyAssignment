@@ -23,14 +23,14 @@ public class Road {
 	}
 
 	// add vehicle to the road array
-	public synchronized void add(Vehicle car) throws InterruptedException {
+	public synchronized void add(Vehicle car) {
 		roadArray[back + 1] = car;
 		back++;
 		LogFileManager.writeToLog("Time: " + roadClock.time() + " - Road " + name + " : Added Car " + car.id);
 	}
 
 	// remove vehicle from the road array
-	public synchronized Vehicle remove() throws InterruptedException {
+	public synchronized Vehicle remove() {
 
 		Vehicle car = roadArray[front];
 		for (int i = 0; i < back; i++) {
@@ -42,7 +42,7 @@ public class Road {
 	}
 
 	// get first car - for consuming in the Junction
-	public synchronized Vehicle getFrontCar() throws InterruptedException {
+	public synchronized Vehicle getFrontCar() {
 		Vehicle car = roadArray[front];
 		return car;
 	}

@@ -31,7 +31,7 @@ public class EntryPoint extends Thread { // aka producer
 	public void run() {
 
 		// create alarm
-		Alarm myAlarm = new Alarm((60 * 60) / carsPerHour);
+		Alarm myAlarm = new Alarm((60 * 60) / carsPerHour, this, false);
 		myAlarm.start();
 
 		// main loop
@@ -53,8 +53,6 @@ public class EntryPoint extends Thread { // aka producer
 						produce();
 						road.notify();
 						myAlarm.reset();
-						LogFileManager.writeToLog(
-								"Time: " + entryPointClock.time() + " - EntryPoint - Resetted alarm " + name);
 						myAlarm.hasEnded = false;
 					}
 				} catch (InterruptedException e) {

@@ -10,11 +10,15 @@ public class Alarm extends Thread {
 	int maxCount;
 	Junction junction;
 	boolean hasEnded = false;
+	Thread owner;
+	boolean IsInterrupt = false;
 
 	// constructor
-	Alarm(int _maxCount) {
+	Alarm(int _maxCount, Thread thread, boolean _IsInterrupt) {
 		maxCount = _maxCount;
 		count = maxCount;
+		owner = thread;
+		IsInterrupt = _IsInterrupt;
 	}
 
 	// reset the alarm
@@ -33,6 +37,10 @@ public class Alarm extends Thread {
 				if (count == 0) {
 					// send message
 					hasEnded = true;
+				}
+				// wake if alarm ended
+				if (count <= 0 && IsInterrupt) {
+					owner.interrupt();
 				}
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block

@@ -24,7 +24,7 @@ public class Vehicle { // creating the cars in the entrypoint
 		return destination;
 	}
 
-	// to get average time to end display
+	// to get average time to end
 	public int getCarParkedTime() {
 		int carParkedTime = parkedTime - entryTime;
 		return carParkedTime;
